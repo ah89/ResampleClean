@@ -80,6 +80,7 @@ class ResampleClean:
         return stop
 re_mean=[]
 err_diff=[]
+sd=[]
 for i in range(30):
     print "\n Experiment number "+str(i+1)
     our_data = dcreate.DataCreater(1000, 0.9).data_list()
@@ -106,9 +107,13 @@ for i in range(30):
 
     re_mean.append(re)
     err_diff.append((abs(np.mean(sc.sample)-y)/y)-(abs(x-y)/y))
+    sd.append(abs(x-y)/y)
 
 print "Mean of error reduction is : "
 print np.mean(err_diff)
 
 print "Average of resampling is : "
-print np.mean(np.mean(re_mean))
+print np.mean(re_mean)
+
+print "Average error of etimator:"
+print np.mean(sd)
