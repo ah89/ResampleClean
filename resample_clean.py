@@ -82,18 +82,23 @@ re_mean=[]
 err_diff=[]
 sd=[]
 for i in range(30):
+    sample_size = 50
+    number_of_repeat = 1000
     print "\n Experiment number "+str(i+1)
     our_data = dcreate.DataCreater(1000, 0.9).data_list()
     # our_data = [1,1,1,1,3,3,3,3,3,2,4]
     y = np.mean(list(set(our_data)))
     print y
-    sc = ResampleClean(our_data, 50)
+    sc = ResampleClean(our_data, sample_size)
     print "Without correction error is :"
-    print abs(np.mean(sc.sample)-y)/y
+    tmp_sum = 0
+    for i in range(number_of_repeat):
+        tmp_sum += abs(np.mean(SamplingDistributionFinder.sampling(our_data, sample_size))-y)/y
+    print tmp_sum/number_of_repeat
 
     re = sc.truth_sample()
     trys = []
-    for i in range(10000):
+    for i in range(number_of_repeat):
         trys.append(sc.distributed_sampler(sc.acception_dist))
     print "Sample result : "
     x = np.mean(trys)
@@ -106,10 +111,12 @@ for i in range(30):
     print re
 
     re_mean.append(re)
-    err_diff.append((abs(np.mean(sc.sample)-y)/y)-(abs(x-y)/y))
+    err_diff.append(abs(abs(np.mean(sc.sample)-y)/y)-(abs(x-y)/y))
     sd.append(abs(x-y)/y)
 
-print "Mean of error reduction is : "
+print "\n Summary :"
+
+print "\nMean of error reduction is : "
 print np.mean(err_diff)
 
 print "Average of resampling is : "
