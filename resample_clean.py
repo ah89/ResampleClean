@@ -79,18 +79,19 @@ class ResampleClean:
             stop+=1
         return stop
 re_mean=[]
-err_diff=[]
 sd=[]
+imp=[]
 for i in range(30):
     sample_size = 50
     number_of_repeat = 1000
     print "\n Experiment number "+str(i+1)
     our_data = dcreate.DataCreater(1000, 0.9).data_list()
     # our_data = [1,1,1,1,3,3,3,3,3,2,4]
+    print "The real average is: "
     y = np.mean(list(set(our_data)))
     print y
     sc = ResampleClean(our_data, sample_size)
-    print "Without correction error is :"
+    print "Without correction error is:"
     tmp_sum = 0
     for i in range(number_of_repeat):
         tmp_sum += abs(np.mean(SamplingDistributionFinder.sampling(our_data, sample_size))-y)/y
@@ -107,20 +108,26 @@ for i in range(30):
     print "Error rate is :"
     print abs(x-y)/y
 
+    tmp_imp = (tmp_sum / number_of_repeat) - (abs(x - y) / y)
+    print "The improvment is: "
+    print tmp_imp
+
+
     print "Number of resampling: "
     print re
 
+
+    imp.append(tmp_imp)
     re_mean.append(re)
-    err_diff.append(abs(abs(np.mean(sc.sample)-y)/y)-(abs(x-y)/y))
-    sd.append(abs(x-y)/y)
+    sd.append(abs(x - y) / y)
 
 print "\n Summary :"
-
-print "\nMean of error reduction is : "
-print np.mean(err_diff)
 
 print "Average of resampling is : "
 print np.mean(re_mean)
 
 print "Average error of etimator:"
 print np.mean(sd)
+
+print "Average improvment of etimator:"
+print np.mean(imp)
