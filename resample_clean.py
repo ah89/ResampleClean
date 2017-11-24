@@ -146,7 +146,7 @@ class SampleCleanTest:
             sample_size = min_sam_size
             for_this_dup_rate = []
             sam_size_point = []
-            while sample_size <  max_sam_size :
+            while sample_size < max_sam_size:
                 sd = []
                 for i in range(self.number_of_experiments):
                     our_data = self.data_generator(duplication_rate, data_size)
@@ -163,9 +163,11 @@ class SampleCleanTest:
 
                 for_this_dup_rate.append(np.mean(sd))
                 sam_size_point.append(float(sample_size)/data_size)
+                print "Sample size is :"+str(sample_size)
                 sample_size += step_size
             x_point = sam_size_point
             result.append(for_this_dup_rate)
+            print "Rate for "+str(duplication_rate)+" has been done!"
         fig = plt.figure(111)
         plt.title("Estimator error with different duplication rate")
         plt.xlabel("Relative sample size")
@@ -173,14 +175,15 @@ class SampleCleanTest:
         for enum in range(len(list_of_dup)):
             plt.plot(x_point,result[enum], label='r='+str(list_of_dup[enum]))
         leg = plt.legend(loc='best', ncol=len(list_of_dup), mode="expand", shadow=True, fancybox=True)
-        leg.get_frame().set_alpha(0.5)
+        # leg = plt.legend(loc='upper right', ncol=len(list_of_dup), mode="None", shadow=True, fancybox=True)
+        # leg.get_frame().set_alpha(0)
         # plt.show()
         pdf.savefig(fig)
         pdf.close()
 
 
-test = SampleCleanTest(1000, 200)
-list3 = [0.1,0.15,0.2,0.25,0.3]
+test = SampleCleanTest(50, 4)
+list3 = [0.1, 0.15, 0.2, 0.25, 0.3]
 list_of_dup = [0.1, 0.3, 0.5, 0.7]
 list2 = [0.1, 0.3]
-test.precision_test(10000,50,50,5000,list3)
+test.precision_test(1000, 50, 200, 500, list3)
