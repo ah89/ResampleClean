@@ -176,14 +176,15 @@ class SampleCleanTest:
             plt.plot(x_point,result[enum], label='r='+str(list_of_dup[enum]))
         leg = plt.legend(loc='best', ncol=len(list_of_dup), mode="expand", shadow=True, fancybox=True)
         # leg = plt.legend(loc='upper right', ncol=len(list_of_dup), mode="None", shadow=True, fancybox=True)
-        # leg.get_frame().set_alpha(0)
+        leg.get_frame().set_alpha(0.3)
         # plt.show()
+        plt.grid(True)
         pdf.savefig(fig)
         pdf.close()
 
 
-test = SampleCleanTest(50, 4)
-list3 = [0.1, 0.15, 0.2, 0.25, 0.3]
+test = SampleCleanTest(5000, 150)
+list3 = [0.1, 0.2, 0.3, 0.4, 0.5]
 list_of_dup = [0.1, 0.3, 0.5, 0.7]
 list2 = [0.1, 0.3]
-test.precision_test(1000, 50, 200, 500, list3)
+test.precision_test(10000, 50,50, 5000, list3)
