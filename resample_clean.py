@@ -23,7 +23,9 @@ class ResampleClean:
         tmpresam = SamplingDistributionFinder.sampling(self.data, self.sample_size)
 
         resample = []
-        while len(resample) != self.sample_size:
+        disaster_stop = 0
+        stop_iter = 3 * int(float(len(self.data)) / self.sample_size)
+        while len(resample) != self.sample_size and disaster_stop < stop_iter:
             inclusion_map = [0] * len(tmpresam)
             for el in tmpresam:
                 rand = random.random()
@@ -35,7 +37,8 @@ class ResampleClean:
                     resample.append(tmpresam[i])
             tmp_resample_size = self.sample_size - len(resample)
             tmpresam = SamplingDistributionFinder.sampling(self.data, tmp_resample_size)
-        self.sample = resample
+            disaster_stop += 1
+        self.sample = list(set(resample))
         # print resample
         sample_dist = SamplingDistributionFinder.sample_distribution(self.sample)
         self.acception_dist = SamplingDistributionFinder.resample_value_acception_distribution(self.data, sample_dist,
@@ -45,7 +48,9 @@ class ResampleClean:
         tmpresam = SamplingDistributionFinder.sampling(self.data, self.sample_size)
 
         resample = []
-        while len(resample) != self.sample_size:
+        disaster_stop = 0
+        stop_iter = 3*int(float(len(self.data))/self.sample_size)
+        while len(resample) != self.sample_size and disaster_stop < stop_iter:
             inclusion_map = [0] * len(tmpresam)
             for el in tmpresam:
                 rand = random.random()
@@ -57,7 +62,8 @@ class ResampleClean:
                     resample.append(tmpresam[i])
             tmp_resample_size = self.sample_size - len(resample)
             tmpresam = SamplingDistributionFinder.sampling(self.data, tmp_resample_size)
-        return resample
+            disaster_stop += 1
+        return list(set(resample))
 
     def _find_acc_prob(self, value, acception_dist):
         for elemnt in acception_dist:
@@ -182,9 +188,48 @@ class SampleCleanTest:
         pdf.savefig(fig)
         pdf.close()
 
+    def dup_resamp(self,data_size,min_sam_size, step, max_sam_size, list_of_dup):
 
-test = SampleCleanTest(5000, 150)
+        pdf = matplotlib.backends.backend_pdf.PdfPages("dup-vs-number-resampling.pdf")
+        result = []
+        sample_size = min_sam_size
+        sam_size_point=[]
+
+        while sample_size < max_sam_size:
+            for_this_dup = []
+            for duplication_rate in list_of_dup:
+
+                re_mean = []
+                for i in range(self.number_of_experiments):
+                    our_data = self.data_generator(duplication_rate, data_size)
+                    # our_data = [1,1,1,1,3,3,3,3,3,2,4]
+                    y = np.mean(list(set(our_data)))
+                    sc = ResampleClean(our_data, sample_size)
+                    re = sc.truth_sample()
+                    re_mean.append(re)
+                for_this_dup.append(np.mean(re_mean))
+            result.append(for_this_dup)
+            sam_size_point.append(sample_size)
+            sample_size += step
+
+        fig = plt.figure(111)
+        plt.title("Number of resampling vs. duplication rate in different sample size")
+        plt.xlabel("Duplication rate")
+        plt.ylabel("Number of resampling")
+        for enum in range(len(sam_size_point)):
+            plt.plot(list_of_dup, result[enum], label='S=' + str(sam_size_point[enum]))
+        leg = plt.legend(loc='best', ncol=len(sam_size_point), mode="expand", shadow=True, fancybox=True)
+        leg.get_frame().set_alpha(0.3)
+        plt.show()
+        plt.grid(True)
+        # pdf.savefig(fig)
+        # pdf.close()
+
+
+
+
+test = SampleCleanTest(10, 3)
 list3 = [0.1, 0.2, 0.3, 0.4, 0.5]
 list_of_dup = [0.1, 0.3, 0.5, 0.7]
 list2 = [0.1, 0.3]
-test.precision_test(10000, 50,50, 5000, list3)
+test.dup_resamp(100, 5,10, 50, list3)
