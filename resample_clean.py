@@ -179,13 +179,8 @@ class SampleCleanTest:
         pdf.close()
 
 
-test = SampleCleanTest(1000, 50)
-list3 = list_of_dup = [0.1,0.15,0.2,0.25,0.3]
+test = SampleCleanTest(1000, 200)
+list3 = [0.1,0.15,0.2,0.25,0.3]
 list_of_dup = [0.1, 0.3, 0.5, 0.7]
 list2 = [0.1, 0.3]
-test.precision_test(100,5,2,10,list3)
-# test.general_test(1000, 0.9, 50)
-
-# points = [[1, 1], [2, 1], [3, 1], [4, 1], [4, 1]]
-# plt.plot(points)
-# plt.show()
+test.precision_test(10000,50,50,5000,list3)
