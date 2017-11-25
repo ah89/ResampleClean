@@ -149,7 +149,6 @@ class SampleCleanTest:
         print np.mean(imp)
 
     def precision_test(self, data_size, min_sam_size ,step_size, max_sam_size , list_of_dup):
-        pdf = matplotlib.backends.backend_pdf.PdfPages("error.pdf")
         result = []
         x_point = []
         print "TEST STARTED"
@@ -179,8 +178,19 @@ class SampleCleanTest:
                 print "Sample size is :"+str(sample_size)
                 sample_size += step_size
             x_point = sam_size_point
+            f = open('prec_values'+str(int(duplication_rate*100))+'.txt', 'w')
+            for ele in for_this_dup_rate:
+                f.write(str(ele) + '\n')
+            f.close()
             result.append(for_this_dup_rate)
             print "Rate for "+str(duplication_rate)+" has been done!"
+        fx = open('prec_x_point.txt', 'w')
+        for ele in x_point:
+            fx.write(str(ele) + '\n')
+        fx.close()
+
+    def hist(self,result,x_point):
+        pdf = matplotlib.backends.backend_pdf.PdfPages("error.pdf")
         fig = plt.figure(111)
         plt.title("Estimator error with different duplication rate")
         plt.xlabel("Relative sample size")
@@ -196,16 +206,15 @@ class SampleCleanTest:
         pdf.close()
 
     def dup_resamp(self,data_size,min_sam_size, step, max_sam_size, list_of_dup):
-
-        pdf = matplotlib.backends.backend_pdf.PdfPages("dup-vs-number-resampling.pdf")
         result = []
         sample_size = min_sam_size
         sam_size_point=[]
-
+        print "Start Test :"
         while sample_size < max_sam_size:
+            print "Start test for sample size:"+str(sample_size)
             for_this_dup = []
             for duplication_rate in list_of_dup:
-
+                print "duplication rate:" + str(duplication_rate)
                 re_mean = []
                 for i in range(self.number_of_experiments):
                     our_data = self.data_generator(duplication_rate, data_size)
@@ -215,10 +224,21 @@ class SampleCleanTest:
                     re = sc.truth_sample()
                     re_mean.append(re)
                 for_this_dup.append(np.mean(re_mean))
+            f = open('dupVSresam_for_samsize'+str(int(sample_size))+'.txt', 'w')
+            for ele in for_this_dup:
+                f.write(str(ele) + '\n')
+            f.close()
             result.append(for_this_dup)
             sam_size_point.append(sample_size)
             sample_size += step
+        fx = open('dup_x_point.txt', 'w')
+        for ele in list_of_dup:
+            fx.write(str(ele) + '\n')
+        fx.close()
 
+
+    def hist_dup_vs_number(self,result,sam_size_point,list_of_dup):
+        pdf = matplotlib.backends.backend_pdf.PdfPages("dup-vs-number-resampling.pdf")
         fig = plt.figure(111)
         plt.title("Number of resampling vs. duplication rate in different sample size")
         plt.xlabel("Duplication rate")
@@ -227,18 +247,18 @@ class SampleCleanTest:
             plt.plot(list_of_dup, result[enum], label='S=' + str(sam_size_point[enum]))
         leg = plt.legend(loc='best', ncol=len(sam_size_point), mode="expand", shadow=True, fancybox=True)
         leg.get_frame().set_alpha(0.3)
-        plt.show()
+        # plt.show()
         plt.grid(True)
-        # pdf.savefig(fig)
+        pdf.savefig(fig)
         # pdf.close()
 
 
 
 
-test = SampleCleanTest(100, 50)
+test = SampleCleanTest(10, 5)
 list3 = [0.1, 0.2, 0.3, 0.4, 0.5]
-list_of_dup = [0.1, 0.3, 0.5, 0.7]
+list_of_dup = [0.1, 0.3]
 list2 = [0.1, 0.15, 0.2, 0.25, 0.3]
 # test.general_test(1000, 0.9, 50)
-test.precision_test(10000, 100, 100, 300, list2)
-# test.dup_resamp(100, 5,10, 50, list3)
+# test.precision_test(10000, 100, 100, 400, list2)
+test.dup_resamp(10000, 50,100, 200, list_of_dup)
