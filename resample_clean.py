@@ -7,6 +7,7 @@ import matplotlib.backends.backend_pdf
 
 
 class ResampleClean:
+
     def __init__(self, data, sample_size):
 
         self.sample_size = sample_size
@@ -17,15 +18,17 @@ class ResampleClean:
         # print sample_dist
         self.acception_dist = SamplingDistributionFinder.resample_value_acception_distribution(data, sample_dist, None)
         # print self.acception_dist
+        self.sample_should_have_dup = 0
+
 
     def resampling(self):
-
+        """
+        This method resample to change the current sample and based on what it get it create sample based on what i
+        :return:
+        """
         tmpresam = SamplingDistributionFinder.sampling(self.data, self.sample_size)
-
         resample = []
-        disaster_stop = 0
-        stop_iter = 3 * int(float(len(self.data)) / self.sample_size)
-        while len(resample) != self.sample_size and disaster_stop < stop_iter:
+        while len(resample) != self.sample_size:
             inclusion_map = [0] * len(tmpresam)
             for el in tmpresam:
                 rand = random.random()
@@ -36,21 +39,22 @@ class ResampleClean:
                 if inclusion_map[i] == 1:
                     resample.append(tmpresam[i])
             tmp_resample_size = self.sample_size - len(resample)
-            tmpresam = SamplingDistributionFinder.sampling(self.data, tmp_resample_size)
-            disaster_stop += 1
-        self.sample = list(set(resample))
-        # print resample
+            if tmp_resample_size != 0:
+                tmpresam = SamplingDistributionFinder.sampling(self.data, tmp_resample_size)
+        self.sample = resample
         sample_dist = SamplingDistributionFinder.sample_distribution(self.sample)
         self.acception_dist = SamplingDistributionFinder.resample_value_acception_distribution(self.data, sample_dist,
-                                                                                               self.acception_dist)
+                                                                                           self.acception_dist)
 
     def distributed_sampler(self, accept_prob):
+        """
+        This method create sample with given accept_prob probability
+        :param accept_prob:
+        :return resample: list[]
+        """
         tmpresam = SamplingDistributionFinder.sampling(self.data, self.sample_size)
-
         resample = []
-        disaster_stop = 0
-        stop_iter = 3*int(float(len(self.data))/self.sample_size)
-        while len(resample) != self.sample_size and disaster_stop < stop_iter:
+        while len(resample) != self.sample_size:
             inclusion_map = [0] * len(tmpresam)
             for el in tmpresam:
                 rand = random.random()
@@ -61,9 +65,9 @@ class ResampleClean:
                 if inclusion_map[i] == 1:
                     resample.append(tmpresam[i])
             tmp_resample_size = self.sample_size - len(resample)
-            tmpresam = SamplingDistributionFinder.sampling(self.data, tmp_resample_size)
-            disaster_stop += 1
-        return list(set(resample))
+            if tmp_resample_size != 0 :
+                tmpresam = SamplingDistributionFinder.sampling(self.data, tmp_resample_size)
+        return resample
 
     def _find_acc_prob(self, value, acception_dist):
         for elemnt in acception_dist:
@@ -78,7 +82,7 @@ class ResampleClean:
 
     def truth_sample(self):
         stop = 0
-        while self.is_repeated(self.sample):
+        while self.is_repeated(self.sample) and self.sample_should_have_dup == 0:
             self.resampling()
             stop += 1
         return stop
@@ -114,7 +118,7 @@ class SampleCleanTest:
             re = sc.truth_sample()
             trys = []
             for rep_count in range(self.number_of_repeat):
-                trys.append(sc.distributed_sampler(sc.acception_dist))
+                trys.append(np.mean(list(set(sc.distributed_sampler(sc.acception_dist)))))
             print "Sample result : "
             x = np.mean(trys)
             print x
@@ -148,7 +152,9 @@ class SampleCleanTest:
         pdf = matplotlib.backends.backend_pdf.PdfPages("error.pdf")
         result = []
         x_point = []
+        print "TEST STARTED"
         for duplication_rate in list_of_dup:
+            print "Test for "+str(duplication_rate)+" of duplications"
             sample_size = min_sam_size
             for_this_dup_rate = []
             sam_size_point = []
@@ -162,7 +168,8 @@ class SampleCleanTest:
 
                     trys = []
                     for rep_count in range(self.number_of_repeat):
-                        trys.append(sc.distributed_sampler(sc.acception_dist))
+                        t = sc.distributed_sampler(sc.acception_dist)
+                        trys.append(np.mean(list(set(t))))
                     x = np.mean(trys)
 
                     sd.append(abs(x - y) / y)
@@ -228,8 +235,10 @@ class SampleCleanTest:
 
 
 
-test = SampleCleanTest(10, 3)
+test = SampleCleanTest(100, 50)
 list3 = [0.1, 0.2, 0.3, 0.4, 0.5]
 list_of_dup = [0.1, 0.3, 0.5, 0.7]
-list2 = [0.1, 0.3]
-test.dup_resamp(100, 5,10, 50, list3)
+list2 = [0.1, 0.15, 0.2, 0.25, 0.3]
+# test.general_test(1000, 0.9, 50)
+test.precision_test(10000, 100, 100, 300, list2)
+# test.dup_resamp(100, 5,10, 50, list3)

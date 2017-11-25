@@ -64,8 +64,8 @@ class SamplingDistributionFinder:
         for element in distribution:
             freq.append(element[1])
             values.append(element[0])
-        sample_size = sum(freq)
-        data_size = len(data)
+        # sample_size = sum(freq)
+        # data_size = len(data)
         if prev_acception_prob == None:
             new_acception_prob = []
             for el in distribution:
