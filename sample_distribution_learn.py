@@ -51,7 +51,7 @@ class SamplingDistributionFinder:
         return probability
 
     @staticmethod
-    def resample_value_acception_distribution(data, distribution, prev_acception_prob = None):
+    def resample_value_acception_distribution(distribution, prev_acception_prob = None):
         """
         This method calculate the (value , accept probablility)
         :param data:
@@ -71,7 +71,8 @@ class SamplingDistributionFinder:
             for el in distribution:
                 # x = float(sample_size) / float(el[1] * data_size)
                 x = 1 / float(el[1])
-                new_acception_prob.append((el[0], x))
+                if x != 1:
+                    new_acception_prob.append((el[0], x))
         else:
             new_acception_prob = prev_acception_prob
             for el in distribution:
@@ -82,7 +83,8 @@ class SamplingDistributionFinder:
                 # x = float(sample_size) / float(el[1] * data_size)
                 x = 1 / float(el[1] )
                 if ind == -1:
-                    new_acception_prob.append((el[0], x))
+                    if x != 1:
+                        new_acception_prob.append((el[0], x))
                 else:
                     # x = float(sample_size) / float(el[1] * data_size)
                     x = 1 / float(el[1])

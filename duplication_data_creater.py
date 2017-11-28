@@ -1,5 +1,6 @@
 import random as rand
 import math
+import numpy
 
 
 class DataCreater:
@@ -35,3 +36,13 @@ class DataCreater:
         for element in data_list:
             freq[element - 1] += 1
         return freq
+
+    @staticmethod
+    def create_data(data_size, dup_rate, min_range, max_range):
+        threshold = int(math.floor(dup_rate * data_size))
+        data = rand.sample(xrange(min_range, max_range), threshold)
+        repetition = data_size - threshold
+        for counter in range(repetition):
+            rand_index = rand.randint(0, threshold-1)
+            data.append(data[rand_index])
+        return data
