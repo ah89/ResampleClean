@@ -329,6 +329,6 @@ listac = [0.25, 0.3]
 # test.precision_test(10000, 50, 200, 1000, list2)
 # test.dup_resamp(10000, 200, 200, 1001, list2)
 # test.dup_resamp_stat(10000, 200, 200, 1001, list2)
-# test.dup_resamp_stat(10000, 800, 200, 1001, listac)
-test.stat_test_precision(10000, 50, 200, 1000, list2)
+test.dup_resamp_stat(10000, 800, 200, 1001, listac)
+# test.stat_test_precision(10000, 50, 200, 1000, list2)
 # test.dupropy_error(data_size=1000,resampling_iteration=100,sample_size=100,list_of_dup=list2)
