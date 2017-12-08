@@ -292,9 +292,12 @@ class ResampleCleanWithHypothesis:
         # print self.sample
         sample_dist = SamplingDistributionFinder.sample_distribution(self.sample)
         # print sample_dist
-        self.acception_dist, self.data_virtual_size = SamplingDistributionFinder.accept_distribution_update(sample_dist, self.sample_size,
-                                                                                    self.data_virtual_size,
-                                                                                    self.confidence_value, None)
+        self.acception_dist, self.data_virtual_size = \
+            SamplingDistributionFinder.accept_distribution_update(sample_dist,
+                                                                  self.sample_size,
+                                                                  self.data_virtual_size,
+                                                                  self.confidence_value,
+                                                                  None)
         # print self.acception_dist
         self.sample_should_have_dup = 0
 
@@ -410,7 +413,7 @@ class ResampleCleanWithHypothesis:
         # return stop
 
         prev_dist = []
-        while self.distribution_distance(prev_dist,self.acception_dist) > 0.001:
+        while self.distribution_distance(prev_dist,self.acception_dist) > 0.01:
             prev_dist = copy.copy(self.acception_dist)
             self.resampling()
             stop += 1
@@ -436,14 +439,13 @@ class ResampleCleanWithHypothesis:
     def distribution_distance(self, prev_dist, current_dist):
         len_prev = len(prev_dist)
         len_current = len(current_dist)
-
         if len_current == 0 or len_prev == 0 or len_current != len_prev:
             return 1
         else:
             np_arr_cuurent = np.array(current_dist)
             np_arr_prev = np.array(prev_dist)
-            # dist = np.linalg.norm(np_arr_cuurent - np_arr_prev)
-            dist = np.max(abs(np_arr_cuurent - np_arr_prev))
+            dist = np.linalg.norm(np_arr_cuurent - np_arr_prev)
+            # dist = np.max(abs(np_arr_cuurent - np_arr_prev))
             return dist
 
     def dupropy(self, sample):
@@ -471,7 +473,7 @@ class ResampleCleanWithHypothesis:
                 if p_hat[0] == dup:
                     freq_hat.append(p_hat[1])
         partition = sum(freq_hat)
-        p = [a/partition for a in freq_hat] # Normalize the probability
+        p = [a / partition for a in freq_hat] # Normalize the probability
         for i in p :
             if len(p) > 1:
                 dist_pred += -1.0*i*math.log(i,len(dup_values))
