@@ -442,9 +442,15 @@ class ResampleCleanWithHypothesis:
         if len_current == 0 or len_prev == 0 or len_current != len_prev:
             return 1
         else:
+            sum = 0
             np_arr_cuurent = np.array(current_dist)
             np_arr_prev = np.array(prev_dist)
-            dist = np.linalg.norm(np_arr_cuurent - np_arr_prev)
+            for i in current_dist:
+                for j in prev_dist:
+                    if i[0] == j[0]:
+                        sum += abs(i[1]-j[1])
+            dist = sum / len_current
+            # dist = np.linalg.norm(np_arr_cuurent - np_arr_prev)
             # dist = np.max(abs(np_arr_cuurent - np_arr_prev))
             return dist
 
