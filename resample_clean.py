@@ -307,6 +307,7 @@ class ResampleCleanWithHypothesis:
         :return:
         """
         tmpresam = SamplingDistributionFinder.sampling(self.data, self.sample_size)
+        num_of_resampling = 0
         resample = []
         # We resample until we make sample with proper size
         while len(resample) != self.sample_size:
@@ -322,6 +323,8 @@ class ResampleCleanWithHypothesis:
             tmp_resample_size = self.sample_size - len(resample)
             if tmp_resample_size != 0:
                 tmpresam = SamplingDistributionFinder.sampling(self.data, tmp_resample_size)
+            else:
+                num_of_resampling += 1
         # We change the sample to new one
         self.sample = resample
         # The distribution needed for learning the distribution phase

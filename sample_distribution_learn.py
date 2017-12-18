@@ -3,6 +3,7 @@ import numpy as np
 from scipy import stats
 import math
 
+
 class SamplingDistributionFinder:
     def __init__(self):
         pass
@@ -203,7 +204,7 @@ class SamplingDistributionFinder:
     #######
 
     @staticmethod
-    def accept_distribution_update(distribution, sample_size, virtual_dataset_size, confidence_value, prev_acception_prob = None):
+    def accept_distribution_update(distribution, sample_size, virtual_dataset_size, confidence_value, num_of_resampling, prev_acception_prob = None):
         """
         This method calculate the (value , accept probablility)
         :param distribution:
@@ -237,22 +238,17 @@ class SamplingDistributionFinder:
                         ind = j
                 x = float(sample_size) / float(el[1] * virtual_dataset_size)
                 if float(el[1]) != 1:
+                    p_hat = float(el[1]) / sample_size
+                    p_zero = num_of_resampling / virtual_dataset_size
+                    z_alpha = stats.norm.ppf(confidence_value)
+                    z_score = abs(p_hat - p_zero) / math.sqrt(p_zero * (1 - p_zero) / sample_size)
                     if ind == -1:  # Add new probability to the distribution
-                        p_hat = float(el[1]) / sample_size
-                        p_zero = 1.0 / virtual_dataset_size
-                        z_alpha = stats.norm.ppf(confidence_value)
-                        z_score = (p_hat - p_zero) / math.sqrt(p_zero * (1 - p_zero) / sample_size)
                         if z_score > z_alpha:
                             new_acception_prob.append((el[0], x))
-                            virtual_dataset_size = virtual_dataset_size - (1.0 / float(x)) + 1
                     else:  # Updating the probability
-                        p_hat = float(el[1]) / sample_size
-                        p_zero = 1.0 / virtual_dataset_size
-                        z_alpha = stats.norm.ppf(confidence_value)
-                        z_score = (p_hat - p_zero) / math.sqrt(p_zero*(1 - p_zero)/sample_size)
                         if z_score > z_alpha:
                             new_acception_prob[ind] = (el[0], new_acception_prob[ind][1] * x)
-                            virtual_dataset_size = virtual_dataset_size - (1.0 / float(x)) + 1
+                    virtual_dataset_size = virtual_dataset_size - (1.0 / float(x)) + 1
         new_virtual_dataset_size = virtual_dataset_size
 
         return new_acception_prob, new_virtual_dataset_size
