@@ -239,7 +239,7 @@ class SamplingDistributionFinder:
                 x = float(sample_size) / float(el[1] * virtual_dataset_size)
                 if float(el[1]) != 1:
                     p_hat = float(el[1]) / sample_size
-                    p_zero = num_of_resampling / virtual_dataset_size
+                    p_zero = (num_of_resampling + 1.0) / virtual_dataset_size
                     z_alpha = stats.norm.ppf(confidence_value)
                     z_score = abs(p_hat - p_zero) / math.sqrt(p_zero * (1 - p_zero) / sample_size)
                     if ind == -1:  # Add new probability to the distribution

@@ -297,6 +297,7 @@ class ResampleCleanWithHypothesis:
                                                                   self.sample_size,
                                                                   self.data_virtual_size,
                                                                   self.confidence_value,
+                                                                  0,
                                                                   None)
         # print self.acception_dist
         self.sample_should_have_dup = 0
@@ -335,6 +336,7 @@ class ResampleCleanWithHypothesis:
                                                                   self.sample_size,
                                                                   self.data_virtual_size,
                                                                   self.confidence_value,
+                                                                  num_of_resampling,
                                                                   self.acception_dist)
 
     def distributed_sampler(self, accept_prob):
