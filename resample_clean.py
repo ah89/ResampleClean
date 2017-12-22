@@ -493,7 +493,7 @@ class ResampleCleanWithHypothesis:
     def dist_correlation(self, sample ):
         if len(self.acception_dist) >1:
             dist = SamplingDistributionFinder.sample_distribution(sample)
-            sample_dist = SamplingDistributionFinder.resample_value_acception_distribution(dist, None)
+            sample_dist = Samconfidence_valueplingDistributionFinder.resample_value_acception_distribution(dist, None)
             acc_val = []
             sam_acc = []
             for tup in self.acception_dist:

@@ -125,7 +125,7 @@ class SampleCleanTest:
                     our_data = self.data_generator(duplication_rate, data_size)
                     # our_data = [1,1,1,1,3,3,3,3,3,2,4]
                     y = np.mean(list(set(our_data)))
-                    sc = ResampleCleanWithHypothesis(data=our_data, sample_size=sample_size, confidence_value=0.95)
+                    sc = ResampleCleanWithHypothesis(data=our_data, sample_size=sample_size, confidence_value=0.99)
 
                     trys = []
                     for rep_count in range(self.number_of_repeat):
@@ -329,6 +329,6 @@ listac = [0.25, 0.3]
 # test.precision_test(10000, 50, 200, 1000, list2)
 # test.dup_resamp(10000, 200, 200, 1001, list2)
 # test.dup_resamp_stat(10000, 200, 200, 1001, list2)
-test.dup_resamp_stat(10000, 200, 200, 1001, list2)
+test.dup_resamp_stat(10000, 1001, 500, 5001, list2)
 # test.stat_test_precision(10000, 50, 200, 1000, list2)
 # test.dupropy_error(data_size=1000,resampling_iteration=100,sample_size=100,list_of_dup=list2)
