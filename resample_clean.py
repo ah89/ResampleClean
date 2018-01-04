@@ -316,7 +316,7 @@ class ResampleCleanWithHypothesis:
             for el in tmpresam:
                 rand = random.random()
                 acception = self._find_acc_prob(el, self.acception_dist)
-                if rand < acception:
+                if rand <= acception:
                     inclusion_map[tmpresam.index(el)] = 1
             for i in range(len(tmpresam)):
                 if inclusion_map[i] == 1:
@@ -324,8 +324,8 @@ class ResampleCleanWithHypothesis:
             tmp_resample_size = self.sample_size - len(resample)
             if tmp_resample_size != 0:
                 tmpresam = SamplingDistributionFinder.sampling(self.data, tmp_resample_size)
-            else:
                 num_of_resampling += 1
+
         # We change the sample to new one
         self.sample = resample
         # The distribution needed for learning the distribution phase

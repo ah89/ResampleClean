@@ -204,7 +204,7 @@ class SamplingDistributionFinder:
     #######
 
     @staticmethod
-    def accept_distribution_update(distribution, sample_size, virtual_dataset_size, confidence_value, num_of_resampling, prev_acception_prob = None):
+    def accept_distribution_update(distribution, sample_size, virtual_dataset_size, confidence_value, num_of_resampling, prev_acception_prob=None):
         """
         This method calculate the (value , accept probablility)
         :param distribution:
@@ -219,14 +219,15 @@ class SamplingDistributionFinder:
         # for element in distribution:
         #     freq.append(element[1])
         #     values.append(element[0])
-
+        curr_vir_size = virtual_dataset_size
         if prev_acception_prob == None:
             new_acception_prob = []
+
             for el in distribution:
                 # x = float(sample_size) / float(el[1] * data_size)
-                x = 1 / float(el[1])
+                # x = 1 / float(el[1])
                 if float(el[1]) != 1:
-                    x = sample_size / (virtual_dataset_size * float(el[1]))
+                    x = sample_size / (curr_vir_size * float(el[1]))
                     new_acception_prob.append((el[0], x))
                     virtual_dataset_size = virtual_dataset_size - (1.0/float(x)) + 1
         else:

@@ -317,18 +317,18 @@ class SampleCleanTest:
         return result
 
 
-test = SampleCleanTest(number_of_experiments=500, number_of_repeat=500 , min_range=500, max_range=10000)
+test = SampleCleanTest(number_of_experiments=1, number_of_repeat=1 , min_range=500, max_range=10000)
 
 
 
 # list3 = [0.1, 0.2, 0.3, 0.4, 0.5]
 # list_of_dup = [0.1, 0.3]
 list2 = [0.1, 0.15, 0.2, 0.25, 0.3]
-listac = [0.25, 0.3]
+listac = [0.5, 0.3]
 # # test.general_test(1000, 0.9, 50)
 # test.precision_test(10000, 50, 200, 1000, list2)
 # test.dup_resamp(10000, 200, 200, 1001, list2)
 # test.dup_resamp_stat(10000, 200, 200, 1001, list2)
-test.dup_resamp_stat(10000, 1001, 500, 5001, list2)
+test.dup_resamp_stat(data_size=100, min_sam_size=50, step=50, max_sam_size=70, list_of_dup=listac)
 # test.stat_test_precision(10000, 50, 200, 1000, list2)
 # test.dupropy_error(data_size=1000,resampling_iteration=100,sample_size=100,list_of_dup=list2)
