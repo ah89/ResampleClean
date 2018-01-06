@@ -38,11 +38,18 @@ class DataCreater:
         return freq
 
     @staticmethod
-    def create_data(data_size, dup_rate, min_range, max_range):
+    def create_data(data_size, dup_rate, min_range, max_range,dist=None):
         threshold = int(math.floor(dup_rate * data_size))
         data = rand.sample(xrange(min_range, max_range), threshold)
         repetition = data_size - threshold
-        for counter in range(repetition):
-            rand_index = rand.randint(0, threshold-1)
-            data.append(data[rand_index])
+        if dist == 'norm':
+            half_mean_l = int(0.25 * numpy.mean(data))
+            half_mean_r = int(0.5 * numpy.mean(data))
+            for counter in range(repetition):
+                rand_index = rand.randint(0, int(0.25 * threshold))
+                data.append(data[rand_index])
+        else:
+            for counter in range(repetition):
+                rand_index = rand.randint(0, threshold-1)
+                data.append(data[rand_index])
         return data

@@ -254,3 +254,48 @@ class SamplingDistributionFinder:
 
         return new_acception_prob, new_virtual_dataset_size
 
+    @staticmethod
+    def accept_dis_update_(distribution, sample_size, data_size, confidence_value, prev_acception_prob=None):
+        """
+        This method calculate the (value , accept probablility)
+        :param distribution:
+        :param confidence_value:
+        :param data_size:
+        :param prev_acception_prob:
+        :return: new acception prob, new virtual dataset size
+        """
+
+        if prev_acception_prob is None:
+            new_acception_prob = []
+
+            for el in distribution:
+                # x = float(sample_size) / float(el[1] * data_size)
+                # x = 1 / float(el[1])
+                if float(el[1]) != 1:
+                    x = sample_size / (data_size * float(el[1]))
+                    new_acception_prob.append((el[0], x))
+                    data_size = data_size - (1.0 / float(x)) + 1
+        else:
+            new_acception_prob = prev_acception_prob
+            for el in distribution:
+                ind = -1
+                for j in range(len(prev_acception_prob)):
+                    if prev_acception_prob[j][0] == el[0]:
+                        ind = j
+                x = float(sample_size) / float(el[1] * data_size)
+                if float(el[1]) != 1:
+                    p_hat = float(el[1]) / sample_size
+                    p_zero = 1.0 / data_size
+                    z_alpha = stats.norm.ppf(confidence_value)
+                    z_score = abs(p_hat - p_zero) / math.sqrt(p_zero * (1 - p_zero) / sample_size)
+                    if ind == -1:  # Add new probability to the distribution
+                        if z_score > z_alpha:
+                            new_acception_prob.append((el[0], x))
+                    else:  # Updating the probability
+                        if z_score > z_alpha:
+                            new_acception_prob[ind] = (el[0], new_acception_prob[ind][1] * x)
+                    data_size = data_size - (1.0 / float(x)) + 1
+        new_virtual_dataset_size = data_size
+
+        return new_acception_prob, new_virtual_dataset_size
+

@@ -7,15 +7,15 @@ from sample_distribution_learn import SamplingDistributionFinder
 
 
 class SampleCleanTest:
-
-    def __init__(self, number_of_experiments, number_of_repeat, min_range, max_range):
+    def __init__(self, number_of_experiments, number_of_repeat, min_range, max_range, dist_type=None):
         self.number_of_experiments = number_of_experiments
         self.number_of_repeat = number_of_repeat
         self.min_range = min_range
         self.max_range = max_range
+        self.dist_type = dist_type
 
     def data_generator(self, duplication_rate, data_size):
-        return DataCreater.create_data(data_size, 1-duplication_rate, self.min_range, self.max_range)
+        return DataCreater.create_data(data_size, 1-duplication_rate, self.min_range, self.max_range, self.dist_type)
 
     def general_test(self, data_size, duplication_rate, sample_size):
         re_mean = []
@@ -34,7 +34,6 @@ class SampleCleanTest:
             for rep_count in range(self.number_of_repeat):
                 tmp_sum += abs(np.mean(SamplingDistributionFinder.sampling(our_data, sample_size))-y)/y
             print tmp_sum/self.number_of_repeat
-
             re = sc.truth_sample()
             trys = []
             for rep_count in range(self.number_of_repeat):
@@ -42,29 +41,21 @@ class SampleCleanTest:
             print "Sample result : "
             x = np.mean(trys)
             print x
-
             print "Error rate is :"
             print abs(x-y)/y
-
             tmp_imp = (tmp_sum / self.number_of_repeat) - (abs(x - y) / y)
             print "The improvment is: "
             print tmp_imp
-
             print "Number of resampling: "
             print re
-
             imp.append(tmp_imp)
             re_mean.append(re)
             sd.append(abs(x - y) / y)
-
         print "\n Summary :"
-
         print "Average of resampling is : "
         print np.mean(re_mean)
-
         print "Average error of etimator:"
         print np.mean(sd)
-
         print "Average improvment of etimator:"
         print np.mean(imp)
 
@@ -84,15 +75,12 @@ class SampleCleanTest:
                     # our_data = [1,1,1,1,3,3,3,3,3,2,4]
                     y = np.mean(list(set(our_data)))
                     sc = ResampleClean(our_data, sample_size)
-
                     trys = []
                     for rep_count in range(self.number_of_repeat):
                         t = sc.distributed_sampler(sc.acception_dist)
                         trys.append(np.mean(list(set(t))))
                     x = np.mean(trys)
-
                     sd.append(abs(x - y) / y)
-
                 for_this_dup_rate.append(np.mean(sd))
                 sam_size_point.append(float(sample_size)/data_size)
                 print "Sample size is :"+str(sample_size)
@@ -126,15 +114,12 @@ class SampleCleanTest:
                     # our_data = [1,1,1,1,3,3,3,3,3,2,4]
                     y = np.mean(list(set(our_data)))
                     sc = ResampleCleanWithHypothesis(data=our_data, sample_size=sample_size, confidence_value=0.99)
-
                     trys = []
                     for rep_count in range(self.number_of_repeat):
                         t = sc.distributed_sampler(sc.acception_dist)
                         trys.append(np.mean(list(set(t))))
                     x = np.mean(trys)
-
                     sd.append(abs(x - y) / y)
-
                 for_this_dup_rate.append(np.mean(sd))
                 sam_size_point.append(float(sample_size)/data_size)
                 print "Sample size is :"+str(sample_size)
@@ -281,7 +266,6 @@ class SampleCleanTest:
                 f.write(str(ele) + '\n')
             f.close()
             result.append([dupropy,err])
-
         return result
 
     def improve(self, data_size, resampling_iteration, sample_size, list_of_dup):
@@ -313,22 +297,18 @@ class SampleCleanTest:
                 f.write(str(ele) + '\n')
             f.close()
             result.append([dupropy,err])
-
         return result
 
 
-test = SampleCleanTest(number_of_experiments=1, number_of_repeat=1 , min_range=500, max_range=10000)
-
-
-
+test = SampleCleanTest(number_of_experiments=500, number_of_repeat=500 , min_range=500, max_range=10000, dist_type='norm')
 # list3 = [0.1, 0.2, 0.3, 0.4, 0.5]
 # list_of_dup = [0.1, 0.3]
 list2 = [0.1, 0.15, 0.2, 0.25, 0.3]
-listac = [0.5, 0.3]
+listac = [0.25, 0.3]
 # # test.general_test(1000, 0.9, 50)
 # test.precision_test(10000, 50, 200, 1000, list2)
 # test.dup_resamp(10000, 200, 200, 1001, list2)
 # test.dup_resamp_stat(10000, 200, 200, 1001, list2)
-test.dup_resamp_stat(data_size=100, min_sam_size=50, step=50, max_sam_size=70, list_of_dup=listac)
-# test.stat_test_precision(10000, 50, 200, 1000, list2)
+test.dup_resamp_stat(10000, 200, 200, 1001, list2)
+test.stat_test_precision(10000, 200, 200, 1001, list2)
 # test.dupropy_error(data_size=1000,resampling_iteration=100,sample_size=100,list_of_dup=list2)
