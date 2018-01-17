@@ -30,6 +30,7 @@ class SampleCleanTest:
             print y
             sc = ResampleClean(our_data, sample_size)
             print "Without correction error is:"
+
             tmp_sum = 0
             for rep_count in range(self.number_of_repeat):
                 tmp_sum += abs(np.mean(SamplingDistributionFinder.sampling(our_data, sample_size))-y)/y
@@ -48,6 +49,7 @@ class SampleCleanTest:
             print tmp_imp
             print "Number of resampling: "
             print re
+
             imp.append(tmp_imp)
             re_mean.append(re)
             sd.append(abs(x - y) / y)
@@ -102,6 +104,7 @@ class SampleCleanTest:
         result = []
         x_point = []
         print "TEST STARTED"
+
         for duplication_rate in list_of_dup:
             print "Test for "+str(duplication_rate)+" of duplications"
             sample_size = min_sam_size
@@ -116,10 +119,12 @@ class SampleCleanTest:
                     sc = ResampleCleanWithHypothesis(data=our_data, sample_size=sample_size, confidence_value=0.99)
                     trys = []
                     for rep_count in range(self.number_of_repeat):
+
                         t = sc.distributed_sampler(sc.acception_dist)
                         trys.append(np.mean(list(set(t))))
                     x = np.mean(trys)
                     sd.append(abs(x - y) / y)
+                print "Result is :" + str(np.mean(sd))
                 for_this_dup_rate.append(np.mean(sd))
                 sam_size_point.append(float(sample_size)/data_size)
                 print "Sample size is :"+str(sample_size)
@@ -135,7 +140,7 @@ class SampleCleanTest:
         for ele in x_point:
             fx.write(str(ele) + '\n')
         fx.close()
-        self.hist(result, x_point, list_of_dup)
+        # self.hist(result, x_point, list_of_dup)
 
     def hist(self, result, x_point, list_of_dup):
         pdf = matplotlib.backends.backend_pdf.PdfPages("error.pdf")
@@ -146,7 +151,7 @@ class SampleCleanTest:
         for enum in range(len(list_of_dup)):
             plt.plot(x_point, result[enum], label='r='+str(list_of_dup[enum]))
         leg = plt.legend(loc='best', ncol=len(list_of_dup), mode="expand", shadow=True, fancybox=True)
-        leg.get_frame().set_alpha(0.3)
+        leg.get_frame(). set_alpha(0.3)
         plt.grid(True)
         pdf.savefig(fig)
         pdf.close()
@@ -216,7 +221,7 @@ class SampleCleanTest:
         for ele in list_of_dup:
             fx.write(str(ele) + '\n')
         fx.close()
-        self.hist_dup_vs_number(result, sam_size_point, list_of_dup)
+        # self.hist_dup_vs_number(result, sam_size_point, list_of_dup)
 
     def hist_dup_vs_number(self, result, sam_size_point, list_of_dup):
         pdf = matplotlib.backends.backend_pdf.PdfPages("dup-vs-number-resampling.pdf")
@@ -300,15 +305,14 @@ class SampleCleanTest:
         return result
 
 
-test = SampleCleanTest(number_of_experiments=500, number_of_repeat=500 , min_range=500, max_range=10000, dist_type='norm')
+test = SampleCleanTest(number_of_experiments=500, number_of_repeat=500, min_range=500, max_range=1000000, dist_type='norm')
 # list3 = [0.1, 0.2, 0.3, 0.4, 0.5]
 # list_of_dup = [0.1, 0.3]
 list2 = [0.1, 0.15, 0.2, 0.25, 0.3]
 listac = [0.25, 0.3]
-# # test.general_test(1000, 0.9, 50)
-# test.precision_test(10000, 50, 200, 1000, list2)
-# test.dup_resamp(10000, 200, 200, 1001, list2)
-# test.dup_resamp_stat(10000, 200, 200, 1001, list2)
-test.dup_resamp_stat(10000, 200, 200, 1001, list2)
-test.stat_test_precision(10000, 200, 200, 1001, list2)
-# test.dupropy_error(data_size=1000,resampling_iteration=100,sample_size=100,list_of_dup=list2)
+
+test.dup_resamp_stat(100000, 2000, 2000, 10001, list2)
+test.stat_test_precision(100000, 2000, 2000, 10001, list2)
+
+# test.dup_resamp_stat(10000, 5000, 500, 5001, list2)
+# test.stat_test_precision(10000, 1500, 500, 5001, list2)
